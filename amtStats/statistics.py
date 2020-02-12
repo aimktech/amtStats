@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+#
+# Simple Statistics Library
+# 
+# Copyright 2020 AI Mechanics & Tech
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+#----- Imports
+from __future__ import annotations
+from typing import List, Dict, Union
+
+import math
+
+
+#----- Classes
+class Statistics:
+    """Generic Statistics class"""
+    PERCENTILES_RANK: List[int] = [ 10, 30, 50, 70, 90, 95, 97, 99 ]
+
+    def __init__(self) -> None:
+        """Constructor"""
+        self.values: List[Union[int, float]] = []
+        self.pct_values: List[int] = self.PERCENTILES_RANK
+
+    def _percentile(self, rank: Union[int, float]) -> float:
+        """Return the percentile value on a dataset for the specified rank
+
+        :param values: The list of values to get the percentile from
+        :param rank: The percentile rank expressed as an integer [0,100] or float [0,1]
+
+        The value returned is the linear interpolation between the two closest ranks.
+        """
+
+        # no values in the list
+        if len(self.values) == 0:
+            raise ValueError("There are no values in the array")
+
+        # only one value
+        if len(self.values) == 1:
+            return self.values[0]
+
+        # check the rank
+        if isinstance(rank, float) and not (0.0 <= rank <= 1.0):
+            raise ValueError("Float rank should be between 0.0 and 1.0")
+
+        if isinstance(rank, int) and not (0 <= rank <= 100):
+            raise ValueError("Integer rank should be between 0 and 100")
+        else:
+            rank = rank / 100.0
+
+        # sort the values
+        self.values.sort()
+
+        # compute the percentile value
+        x = rank * (len(self.values) - 1)
+        y = int(x)
+        z = x % 1
+        
+        return self.values[y] + z * (self.values[y+1] - self.values[y])
+
+    def update(self, value: Union[int, float]) -> None:
+        """Update the statistics array"""
+        if not isinstance(value, (int, float)):
+            raise TypeError
+        self.values.append(value)
+
+    def percentiles(self, pct_values: List[int]) -> List[int]:
+        """Change the default percentiles values
+        
+        :param pct_values: the new list of percentiles
+
+        :return: the previous list of percentiles values
+        """
+        old_list = self.pct_values.copy()
+        self.pct_values = pct_values
+        return old_list
+
+    def compute(self) -> Dict[str, Union[int, float]]:
+        """Compute the statistics
+        
+        :return: a dict with the statistics computed from the array
+        """
+        result = {
+            'min': min(self.values),
+            'max': max(self.values),
+            'count': len(self.values),
+            'sum': sum(self.values),
+            'mean': round(sum(self.values) / len(self.values), 3),
+            'median': round(self._percentile(50), 3)
+        }
+
+        # compute the standard deviation
+        acc = 0.0
+        for value in self.values:
+            acc += (value - result['mean'])**2
+        result['stddev'] = round(math.sqrt(acc/result['count']), 7)
+
+        # compute the percentiles
+        for percent in self.pct_values:
+            result[f'{percent}th'] = round(self._percentile(percent), 3)
+        
+        return result
