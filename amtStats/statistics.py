@@ -24,6 +24,11 @@ from typing import List, Dict, Union
 import math
 
 
+#----- Types aliases
+T_VALUE = Union[int, float]
+T_VALUES = List[T_VALUE]
+
+
 #----- Classes
 class Statistics:
     """Generic Statistics class"""
@@ -31,10 +36,10 @@ class Statistics:
 
     def __init__(self) -> None:
         """Constructor"""
-        self.values: List[Union[int, float]] = []
+        self.values: T_VALUES = []
         self.pct_values: List[int] = self.PERCENTILES_RANK
 
-    def _percentile(self, rank: Union[int, float]) -> float:
+    def _percentile(self, rank: T_VALUE) -> float:
         """Return the percentile value on a dataset for the specified rank
 
         :param values: The list of values to get the percentile from
@@ -71,7 +76,7 @@ class Statistics:
         
         return array[y] + z * (array[y+1] - array[y])
 
-    def update(self, value: Union[int, float]) -> None:
+    def update(self, value: T_VALUE) -> None:
         """Update the statistics array"""
         if not isinstance(value, (int, float)):
             raise TypeError
@@ -88,7 +93,7 @@ class Statistics:
         self.pct_values = pct_values
         return old_list
 
-    def compute(self) -> Dict[str, Union[int, float]]:
+    def compute(self) -> Dict[str, T_VALUE]:
         """Compute the statistics
         
         :return: a dict with the statistics computed from the array
