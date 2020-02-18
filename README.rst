@@ -16,6 +16,7 @@ The following statistics are available:
     - **mean**
     - **median**
     - **stddev**
+    - **quantile**: Q1, Q3, InterQuantile Range (IQR)
     - **percentiles**: 10th, 30th, 50th, 70th, 90th, 95th, 97th and 99th
 
 ----
@@ -135,6 +136,6 @@ This package is released under the Apache License 2.0. See the bundled
 .. |coverage| image:: https://img.shields.io/static/v1?label=coverage&message=100%25&color=blue&style=flat-square
     :alt: Tests coverage
 
-.. |license| image:: https://img.shields.io/badge/license-Apache2.0-blue.svg?style=flat-square
+.. |license| image:: https://img.shields.io/badge/license-Apache--2.0-blue?style=flat-square
     :target: https://raw.githubusercontent.com/aimktech/amtstats/master/LICENSE.txt
     :alt: Package license
