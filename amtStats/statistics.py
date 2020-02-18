@@ -61,14 +61,15 @@ class Statistics:
             rank = rank / 100.0
 
         # sort the values
-        self.values.sort()
+        array = self.values.copy()
+        array.sort()
 
         # compute the percentile value
-        x = rank * (len(self.values) - 1)
+        x = rank * (len(array) - 1)
         y = int(x)
         z = x % 1
         
-        return self.values[y] + z * (self.values[y+1] - self.values[y])
+        return array[y] + z * (array[y+1] - array[y])
 
     def update(self, value: Union[int, float]) -> None:
         """Update the statistics array"""
