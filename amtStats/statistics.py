@@ -76,6 +76,28 @@ class Statistics:
         
         return array[y] + z * (array[y+1] - array[y])
 
+    def _quantile(self, values: T_VALUES, quantile: int = 2) -> float:
+        """Return the quantile (Q1,Q2,Q3) of the values"""
+        # copy the values
+        array = values.copy()
+        array.sort()
+
+        # length and mid point
+        alen = len(array)
+        amid = alen >> 1
+
+        if quantile == 1:
+            return self._quantile(array[:amid])
+        elif quantile == 3:
+            return self._quantile(array[amid:])
+        else:
+            if alen & 1 == 1:
+                # array is odd
+                return array[amid]
+            else:
+                # array is even, take mid-point
+                return (array[amid-1] + array[amid]) / 2
+
     def update(self, value: T_VALUE) -> None:
         """Update the statistics array"""
         if not isinstance(value, (int, float)):
@@ -106,6 +128,11 @@ class Statistics:
             'mean': round(sum(self.values) / len(self.values), 3),
             'median': round(self._percentile(50), 3)
         }
+
+        # retrieve the interquartile range
+        result['q1'] = round(self._quantile(self.values, 1), 3)
+        result['q3'] = round(self._quantile(self.values, 3), 3)
+        result['iqr'] = result['q3'] - result['q1']
 
         # compute the standard deviation
         acc = 0.0
