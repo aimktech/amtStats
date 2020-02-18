@@ -80,3 +80,8 @@ class TestFactory(unittest.TestCase):
         self.assertAlmostEqual(self.results['95th'], 962.15)
         self.assertAlmostEqual(self.results['97th'], 966.42)
         self.assertAlmostEqual(self.results['99th'], 989.01)
+
+    def test_quantile_values(self):
+        self.assertAlmostEqual(self.results['q1'],132.5)
+        self.assertAlmostEqual(self.results['q3'], 686.0)
+        self.assertAlmostEqual(self.results['iqr'], 553.5)
