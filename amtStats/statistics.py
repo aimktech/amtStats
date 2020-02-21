@@ -78,6 +78,15 @@ class Statistics:
 
     def _quantile(self, values: T_VALUES, quantile: int = 2) -> float:
         """Return the quantile (Q1,Q2,Q3) of the values"""
+
+        # no values in the list
+        if len(values) == 0:
+            raise ValueError("There are no values in the array")
+
+        # only one value
+        if len(values) == 1:
+            return values[0]
+
         # copy the values
         array = values.copy()
         array.sort()
