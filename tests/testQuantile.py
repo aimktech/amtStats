@@ -80,3 +80,12 @@ class TestQuantiles(unittest.TestCase):
         
         median = self.obj._quantile(self.obj.values, 3)
         self.assertEqual(median, 72.0)
+
+    def test_empty_values(self):
+        with self.assertRaises(ValueError):
+            self.obj._quantile([], 1)
+        
+    def test_only_one_value(self):
+        self.obj.update(42)
+        self.assertEqual(self.obj._quantile(self.obj.values, 1), 42)
+        
